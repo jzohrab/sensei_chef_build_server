@@ -1,0 +1,35 @@
+---
+driver:
+  name: vagrant
+  boot_timeout: 1200
+  gui: false
+
+provisioner:
+  name: chef_zero
+  always_update_cookbooks: true
+
+verifier:
+  name: inspec
+
+transport:
+  name: winrm
+  elevated: true
+  username: Administrator
+  password: Pass@word1
+
+platforms:
+  - name: windows-2012R2
+    driver:
+      network:
+       - [forwarded_port, {guest: 3389, host: 33389}]
+    customize:
+        memory: 2048
+
+suites:
+  - name: default
+    run_list:
+      - recipe[sensei_chef_build_server::default]
+    verifier:
+      inspec_tests:
+        - test/smoke/default
+    attributes:
